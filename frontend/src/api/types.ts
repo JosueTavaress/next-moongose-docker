@@ -1,8 +1,9 @@
 type TEmployees = {
-  id: number,
+  _id: string,
   name: string,
   position: string,
   department: string,
+  admissionDate: Date,
 };
 
 export default TEmployees;

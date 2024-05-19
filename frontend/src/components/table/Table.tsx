@@ -27,7 +27,7 @@ import {
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { deleteEmployee as apiDeleteEmployee, updateEmployee } from '../../api/employees';
 import { useEmployeeContext } from '../../context/EmployeeContext';
-import formatDateBR from "@/utils/format-date";
+import { formatDate, formatDateBR } from "@/utils/format-date";
 
 type props = {
   employees: TEmployees[],
@@ -79,10 +79,9 @@ const TableEmployees = ({ employees, filters }: props) => {
     onClose();
   }
 
-  const sortByName = (list: TEmployees[]): TEmployees[] =>
-    list.sort((a, b) => a.name.localeCompare(b.name));
-
   useEffect(() => {
+    const sortByName = (list: TEmployees[]): TEmployees[] =>
+      list.sort((a, b) => a.name.localeCompare(b.name));
     const cloneEmployees = structuredClone(employees);
     if (filters.filterName.trim()) {
       const filteredEmployees = cloneEmployees.filter((el) =>
@@ -92,7 +91,7 @@ const TableEmployees = ({ employees, filters }: props) => {
     } else {
       setEmployeesFilters(filters.order ? sortByName(cloneEmployees) : cloneEmployees);
     }
-  }, [filters]);
+  }, [filters, employees]);
 
 
   const listFiltered = employeesFilters.length > 0 ? employeesFilters : employees;
@@ -165,6 +164,20 @@ const TableEmployees = ({ employees, filters }: props) => {
                 onChange={(e) => setEditionEmployee({ ...editionEmployee, position: e.target.value })}
                 value={editionEmployee.position}
                 placeholder='Cargo' />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Data de admissão</FormLabel>
+              <Input
+                type='date'
+                border='1px solid'
+                borderColor='gray.300'
+                bgColor='white'
+                focusBorderColor='gray.500'
+                color='gray.800'
+                placeholder='Data de admisão'
+                onChange={(e) => setEditionEmployee({ ...editionEmployee, admissionDate: new Date(e.target.value) })}
+                value={formatDate(editionEmployee.admissionDate)}
+              />
             </FormControl>
           </ModalBody>
           <ModalFooter>

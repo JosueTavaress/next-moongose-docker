@@ -1,0 +1,52 @@
+services:
+
+  frontend:
+    build:
+      context: frontend
+    ports:
+      - 3000:3000
+    stdin_open: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - react-express
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    command: npm run dev
+    networks:
+      - express-mongo
+      - react-express
+    depends_on:
+      - mongo
+
+  mongo:
+    restart: always
+    image: mongo:4.2.0
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - express-mongo
+    expose:
+      - 27017
+networks:
+  react-express:
+  express-mongo:
+
+volumes:
+  mongo_data:

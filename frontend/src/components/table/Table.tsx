@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TEmployees from "@/api/types";
 import {
   Table,
@@ -31,9 +31,13 @@ import formatDateBR from "@/utils/format-date";
 
 type props = {
   employees: TEmployees[],
+  filters: {
+    order: boolean,
+    filterName: string
+  },
 }
 
-const TableEmployees = ({ employees }: props) => {
+const TableEmployees = ({ employees, filters }: props) => {
   const { removeEmployee, editContextEmployee } = useEmployeeContext();
   // modal edition
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +45,8 @@ const TableEmployees = ({ employees }: props) => {
   // modal delete
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const onCloseDelete = () => setIsOpenModalDelete(!isOpenModalDelete);
+
+  const [employeesFilters, setEmployeesFilters] = useState<TEmployees[]>([]);
 
   const [editionEmployee, setEditionEmployee] = useState<TEmployees>({
     department: '',
@@ -73,6 +79,24 @@ const TableEmployees = ({ employees }: props) => {
     onClose();
   }
 
+  const sortByName = (list: TEmployees[]): TEmployees[] =>
+    list.sort((a, b) => a.name.localeCompare(b.name));
+
+  useEffect(() => {
+    const cloneEmployees = structuredClone(employees);
+    if (filters.filterName.trim()) {
+      const filteredEmployees = cloneEmployees.filter((el) =>
+        el.name.toLowerCase().includes(filters.filterName.toLowerCase())
+      );
+      setEmployeesFilters(filters.order ? sortByName(filteredEmployees) : filteredEmployees);
+    } else {
+      setEmployeesFilters(filters.order ? sortByName(cloneEmployees) : cloneEmployees);
+    }
+  }, [filters]);
+
+
+  const listFiltered = employeesFilters.length > 0 ? employeesFilters : employees;
+
   return (
     <>
       <TableContainer>
@@ -87,7 +111,7 @@ const TableEmployees = ({ employees }: props) => {
             </Tr>
           </Thead>
           <Tbody>
-            {employees.map((employee, idx) => <Tr key={idx}>
+            {listFiltered.map((employee, idx) => <Tr key={idx}>
               <Td >{employee.name}</Td>
               <Td >{employee.department}</Td>
               <Td >{employee.position}</Td>

@@ -1,54 +1,31 @@
-import TEmployees from "./types";
+import api from "./setup";
 
-const employees: TEmployees[] = [
-  {
-    id: 1,
-    name: "João Silva",
-    position: "Analista de Sistemas",
-    department: "TI",
-  },
-  {
-    id: 2,
-    name: "Maria Oliveira",
-    position: "Gerente de Marketing",
-    department: "Marketing",
-  },
-  {
-    id: 3,
-    name: "Carlos Souza",
-    position: "Assistente Administrativo",
-    department: "Administração",
-  },
-  {
-    id: 4,
-    name: "Ana Pereira",
-    position: "Desenvolvedora Full Stack",
-    department: "TI",
-  },
-  {
-    id: 5,
-    name: "Pedro Lima",
-    position: "Coordenador de Projetos",
-    department: "PMO",
-  },
-  {
-    id: 6,
-    name: "Fernanda Costa",
-    position: "Analista Financeira",
-    department: "Financeiro",
-  },
-  {
-    id: 7,
-    name: "Rafael Gomes",
-    position: "Engenheiro de Software",
-    department: "TI",
-  },
-  {
-    id: 8,
-    name: "Beatriz Almeida",
-    position: "Especialista em Recursos Humanos",
-    department: "RH",
-  }
-]
+type TEmployee = {
+  _id: string,
+  name: string,
+  position: string,
+  department: string,
+  admissionDate: Date
+}
 
-export default employees;
+const getEmployee = async (): Promise<TEmployee[]> => {
+  const request = await api.get('/employees');
+  return request.data;
+}
+
+const createEmployee = async (data: TEmployee): Promise<any> => {
+ const request = await api.post('/employees', {...data, admissionDate: new Date(data.admissionDate)});
+ return request;
+}
+
+const updateEmployee = async (id: string, data: TEmployee): Promise<any> => {
+  const request = await api.put(`/employees/${id}`, data);
+  return request
+}
+
+const deleteEmployee = async (id: string): Promise<any> => {
+  const request = await api.delete(`/employees/${id}`);
+  return request
+}
+
+export { getEmployee, createEmployee, deleteEmployee, updateEmployee };

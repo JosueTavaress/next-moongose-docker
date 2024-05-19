@@ -25,13 +25,16 @@ import {
   Text
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { deleteEmployee as apiDeleteEmployee, updateEmployee } from '../../api/employees';
+import { useEmployeeContext } from '../../context/EmployeeContext';
+import formatDateBR from "@/utils/format-date";
 
 type props = {
   employees: TEmployees[],
-  setEmployees: (newEmployees: TEmployees[]) => void
 }
 
-const TableEmployees = ({ employees, setEmployees }: props) => {
+const TableEmployees = ({ employees }: props) => {
+  const { removeEmployee, editContextEmployee } = useEmployeeContext();
   // modal edition
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(!isOpen);
@@ -41,21 +44,33 @@ const TableEmployees = ({ employees, setEmployees }: props) => {
 
   const [editionEmployee, setEditionEmployee] = useState<TEmployees>({
     department: '',
-    id: 0,
+    _id: '',
     name: '',
-    position: ''
+    position: '',
+    admissionDate: new Date(),
   });
 
-  const hadleClickEdition = (employee: TEmployees): void => {
+  const handleClickEdition = (employee: TEmployees): void => {
     onClose();
     setEditionEmployee(employee);
   }
 
-  const hadleClickDelete = (employee: TEmployees): void => {
-    onCloseDelete();
+  const handleClickDelete = (employee: TEmployees): void => {
     setEditionEmployee(employee);
-    const newList: TEmployees[] = employees.filter((el) => el.id !== employee.id);
-    setEmployees(newList);
+    onCloseDelete();
+  }
+
+  const deleteEmployee = async () => {
+    const { _id: id } = editionEmployee;
+    removeEmployee(id);
+    await apiDeleteEmployee(id);
+    onCloseDelete();
+  }
+
+  const saveChange = async () => {
+    await updateEmployee(editionEmployee._id, editionEmployee);
+    editContextEmployee(editionEmployee._id, editionEmployee);
+    onClose();
   }
 
   return (
@@ -67,6 +82,7 @@ const TableEmployees = ({ employees, setEmployees }: props) => {
               <Th >Nome</Th>
               <Th >Departamento</Th>
               <Th >Cargo</Th>
+              <Th >Adimissão</Th>
               <Th >Editar/Excluir</Th>
             </Tr>
           </Thead>
@@ -75,16 +91,17 @@ const TableEmployees = ({ employees, setEmployees }: props) => {
               <Td >{employee.name}</Td>
               <Td >{employee.department}</Td>
               <Td >{employee.position}</Td>
+              <Td >{formatDateBR(employee.admissionDate)}</Td>
               <Td>
                 <Tooltip label="Editar" aria-label="Editar">
                   <IconButton
-                    onClick={() => hadleClickEdition(employee)}
+                    onClick={() => handleClickEdition(employee)}
                     aria-label="Editar" icon={<EditIcon />}
                     size="sm" />
                 </Tooltip>
                 <Tooltip label="Excluir" aria-label="Excluir">
                   <IconButton
-                    onClick={() => hadleClickDelete(employee)}
+                    onClick={() => handleClickDelete(employee)}
                     ml={8}
                     aria-label="Excluir"
                     icon={<DeleteIcon />}
@@ -127,7 +144,7 @@ const TableEmployees = ({ employees, setEmployees }: props) => {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="teal" mr={3}>
+            <Button onClick={saveChange} colorScheme="teal" mr={3}>
               Salvar
             </Button>
             <Button onClick={onClose}>Cancelar</Button>
@@ -146,7 +163,7 @@ const TableEmployees = ({ employees, setEmployees }: props) => {
             <Text>Essa ação não poderar ser desfeita, você realmente deseja exlcuir <strong>{editionEmployee.name}</strong></Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme='red' mr={3}>
+            <Button onClick={deleteEmployee} colorScheme='red' mr={3}>
               Excluir
             </Button>
             <Button onClick={onCloseDelete}>Cancelar</Button>

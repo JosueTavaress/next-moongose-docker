@@ -12,7 +12,7 @@ const create = async (name: string, position: string, department: string, _admis
   return employee;
 };
 
-const update = async (id: string, name: string, position: string, department: string, admissionDate: Date) => {
+const update = async (id: string, name: string, position: string, department: string, admissionDate: Date): Promise<IEmployee|null> => {
   const employeeUpdated = await Employee.findByIdAndUpdate(id, {
     name,
     position,

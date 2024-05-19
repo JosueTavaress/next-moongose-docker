@@ -1,6 +1,4 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { FunctionComponent } from 'react';
 import {
   Box,
   Button,
@@ -10,12 +8,14 @@ import {
   Heading,
   Input,
   Text,
-  Textarea,
   FormErrorMessage,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { createEmployee } from '../../api/employees';
+import { useEmployeeContext } from '../../context/EmployeeContext';
+import { useRouter } from 'next/navigation';
 
 interface IUserFormData {
   name: string;
@@ -31,23 +31,17 @@ const schema = yup.object({
   admissionDate: yup.string().required('A Data de admisão é obrigatória'),
 }).required();
 
-const Cadastro: FunctionComponent = () => {
+const Register = () => {
+  const router = useRouter();
+  const { addEmployee } = useEmployeeContext();
   const { register, handleSubmit, formState: { errors } } = useForm<IUserFormData>({
     resolver: yupResolver(schema)
   });
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const onSubmit = (data: IUserFormData) => {
-    console.log(data); // wip add new user
-  }
-
-  if (!isClient) {
-    return null;
+  const onSubmit = async (data: any) => {
+    const employee = await createEmployee(data);
+    addEmployee(employee);
+    router.push('/');
   }
 
   return (
@@ -154,4 +148,4 @@ const Cadastro: FunctionComponent = () => {
   )
 }
 
-export default Cadastro;
+export default Register;

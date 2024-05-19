@@ -9,10 +9,10 @@ const Header = () => {
       direction={{ base: 'column', md: 'row' }} 
       justify="space-evenly" 
       align="center" 
-      p="4" 
+      p="4"
       bg="gray.100"
-      borderBottom="1px" 
-      borderColor="gray.200" 
+      borderBottom="1px"
+      borderColor="gray.200"
       textAlign={{ base: 'center', md: 'left' }}
     >
       <Heading as="h1" size="lg" mb={{ base: 2, md: 0 }}>

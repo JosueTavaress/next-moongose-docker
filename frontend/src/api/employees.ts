@@ -13,19 +13,18 @@ const getEmployee = async (): Promise<TEmployee[]> => {
   return request.data;
 }
 
-const createEmployee = async (data: TEmployee): Promise<any> => {
+const createEmployee = async (data: TEmployee): Promise<TEmployee> => {
  const request = await api.post('/employees', {...data, admissionDate: new Date(data.admissionDate)});
- return request;
+ return request.data;
 }
 
-const updateEmployee = async (id: string, data: TEmployee): Promise<any> => {
+const updateEmployee = async (id: string, data: TEmployee): Promise<TEmployee> => {
   const request = await api.put(`/employees/${id}`, data);
-  return request
+  return request.data;
 }
 
-const deleteEmployee = async (id: string): Promise<any> => {
-  const request = await api.delete(`/employees/${id}`);
-  return request
+const deleteEmployee = async (id: string): Promise<void> => {
+   await api.delete(`/employees/${id}`);
 }
 
 export { getEmployee, createEmployee, deleteEmployee, updateEmployee };

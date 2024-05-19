@@ -1,8 +1,12 @@
 import { app } from './app';
+import swaggerDocs from './swagger';
 
-const porta = process.env.PORT || 4000;
+const port = process.env.PORT || 4000;
 
-const server = app.listen(porta, () => console.log(`App listening port:${porta}`));
+const server = app.listen(port, () => {
+    swaggerDocs(app);
+    console.log(`App listening port:${port}`)
+});
 
 process.on('SIGINT', () => {
     server.close();

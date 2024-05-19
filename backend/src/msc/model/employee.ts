@@ -6,7 +6,32 @@ export interface IEmployee extends Document {
   department: string;
   admissionDate: Date;
 }
-
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    EmployeeSchema:
+ *      type: object
+ *      required:
+ *        - name
+ *        - position
+ *        - department
+ *        - admissionDate
+ *      properties:
+ *        name:
+ *          type: string
+ *          default: Jane Doe
+ *        position:
+ *          type: string
+ *          default: Developer
+ *        department:
+ *          type: string
+ *          default: IT
+ *        admissionDate:
+ *          type: string
+ *          format: date-time
+ *          default: "2024-05-19T00:00:00.000Z"
+ */
 const EmployeeSchema: Schema = new Schema({
   name: { type: String, required: true },
   position: { type: String, required: true },

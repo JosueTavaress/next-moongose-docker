@@ -1,5 +1,4 @@
 # RDR
-### Overview gravada [video](https://tella.video/my-video-5fzt)
  Dashboard administrativo simples onde os usuários possam gerenciar uma lista de funcionários, incluindo a criação, leitura, atualização e exclusão de registros de funcionários.
 
 ## Pré-requisitos
